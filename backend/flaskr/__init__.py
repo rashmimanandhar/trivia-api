@@ -71,7 +71,6 @@ def create_app(test_config=None):
   '''
   @app.route('/questions')
   def retrieve_questions():
-    print(request.args.get('page'))
     selection = Question.query.order_by(Question.id).all()
     current_questions = paginate_questions(request, selection)
 
@@ -160,7 +159,7 @@ def create_app(test_config=None):
     search_term = body.get('search_term', None)
 
     try:
-      search_results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term)))
+      search_results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term))).all()
 
       if search_term:
         return jsonify({
@@ -179,7 +178,24 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/categories/<int:category_id>/questions')
+  def retrieve_questions_by_category(category_id):
+    selection = Question.query.filter(Question.category == category_id).all()
+    current_questions = paginate_questions(request, selection)
 
+    categories = Category.query.order_by(Category.type).all()
+
+    if len(current_questions) == 0:
+      abort(404)
+    return jsonify({
+      'success': True,
+      'questions': current_questions,
+      'total_questions': len(Question.query.all()),
+      'current_category': category_id,
+      'categories': [category.format() for category in categories]
+    })
+    
+    
 
   '''
   @TODO: 
