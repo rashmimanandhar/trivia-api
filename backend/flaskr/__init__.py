@@ -156,6 +156,9 @@ def create_app(test_config=None):
   def search_questions():
     body = request.get_json()
 
+    if not ('search_term' in body):
+      abort(422)
+
     search_term = body.get('search_term', None)
 
     try:
@@ -208,12 +211,36 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  
 
   '''
   @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+  def not_found(error):
+      return jsonify({
+          "success": False, 
+          "error": 404,
+          "message": "resource not found"
+      }), 404
+
+  @app.errorhandler(422)
+  def unprocessable(error):
+      return jsonify({
+          "success": False, 
+          "error": 422,
+          "message": "unprocessable"
+      }), 422
+
+  @app.errorhandler(400)
+  def bad_request(error):
+      return jsonify({
+          "success": False, 
+          "error": 400,
+          "message": "bad request"
+      }), 400
   
   return app
 
