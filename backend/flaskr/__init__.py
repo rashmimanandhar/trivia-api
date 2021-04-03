@@ -97,10 +97,7 @@ def create_app(test_config=None):
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_questions(question_id):
     try:
-      question = Question.question.filter(Question.id == question_id).one_or_none()
-      if question is None:
-        abort(404)
-      
+      question = Question.query.filter(Question.id == question_id).one_or_none()
       question.delete()
       return jsonify({
         'success': True,
@@ -157,14 +154,13 @@ def create_app(test_config=None):
     body = request.get_json()
 
     if not ('search_term' in body):
-      abort(422)
+      abort(400)
 
     search_term = body.get('search_term', None)
 
     try:
-      search_results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term))).all()
-
-      if search_term:
+        search_results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term))).all()
+      
         return jsonify({
           'success': True,
           'questions': [question.format() for question in search_results],
@@ -211,7 +207,17 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
-  
+  # @app.route('/quizzes', methods = ["POST"])
+  # def play_quiz():
+  #   try:
+  #     body = response.get_json()
+
+  #     if not ('quiz_category' in body and 'previous_question' in body):
+  #       abort(422)
+      
+  #     category = body.get('quiz_category')
+  #     previous_question = body.get('previous_question')
+
 
   '''
   @TODO: 
@@ -223,7 +229,7 @@ def create_app(test_config=None):
       return jsonify({
           "success": False, 
           "error": 404,
-          "message": "resource not found"
+          "message": 'resource not found'
       }), 404
 
   @app.errorhandler(422)
@@ -231,7 +237,7 @@ def create_app(test_config=None):
       return jsonify({
           "success": False, 
           "error": 422,
-          "message": "unprocessable"
+          "message": "unprocessable entity"
       }), 422
 
   @app.errorhandler(400)
@@ -241,6 +247,23 @@ def create_app(test_config=None):
           "error": 400,
           "message": "bad request"
       }), 400
+  
+  @app.errorhandler(405)
+  def bad_request(error):
+      return jsonify({
+          "success": False, 
+          "error": 405,
+          "message": "method not allowed"
+      }), 405
+  
+  @app.errorhandler(500)
+  def bad_request(error):
+      return jsonify({
+          "success": False, 
+          "error": 500,
+          "message": "internal server error"
+      }), 500
+  
   
   return app
 
