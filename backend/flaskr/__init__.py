@@ -3,7 +3,8 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
-
+import sys
+import traceback
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
@@ -24,12 +25,14 @@ def create_app(test_config=None):
  
   
   '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+  @TODO: 
+  Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
   CORS(app)
 
   '''
-  @TODO: Use the after_request decorator to set Access-Control-Allow
+  @TODO: 
+  Use the after_request decorator to set Access-Control-Allow
   '''
   @app.after_request
   def after_request(response):
@@ -37,7 +40,7 @@ def create_app(test_config=None):
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
     return response
 
-  '''
+  ''' 
   @TODO: 
   Create an endpoint to handle GET requests 
   for all available categories.
@@ -54,7 +57,7 @@ def create_app(test_config=None):
       'total_categories': len(categories)
     })
 
-  '''
+  ''' 
   @TODO: 
   Create an endpoint to handle GET requests for questions, 
   including pagination (every 10 questions). 
@@ -92,6 +95,20 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route('/questions/<int:question_id>', methods=['DELETE'])
+  def delete_questions(question_id):
+    try:
+      question = Question.question.filter(Question.id == question_id).one_or_none()
+      if question is None:
+        abort(404)
+      
+      question.delete()
+      return jsonify({
+        'success': True,
+        'deleted': question_id 
+      })
+    except:
+      abort(422)
 
   '''
   @TODO: 
@@ -103,6 +120,28 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/questions', methods=['POST'])
+  def post_questions():
+    body = request.get_json()
+    if not ('question' in body and 'answer' in body and 'difficulty' in body and 'category' in body):
+      abort(422)
+    new_question = body.get('question', None)
+    new_answer = body.get('answer', None)
+    new_category = body.get('category', None)
+    new_difficulty_score = body.get('difficulty', None)
+
+    try:
+      question = Question(question=new_question, answer=new_answer, category=new_category, difficulty=new_difficulty_score)
+      question.insert()
+
+      return jsonify({
+        'success': True,
+        'created': question.id
+      })
+    except:
+      e = sys.exc_info()[0]
+      traceback.print_exc() 
+      abort(422)
 
   '''
   @TODO: 
@@ -114,6 +153,23 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
+  @app.route('/questions/search', methods = ['POST'])
+  def search_questions():
+    body = request.get_json()
+
+    search_term = body.get('search_term', None)
+
+    try:
+      search_results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term)))
+
+      if search_term:
+        return jsonify({
+          'success': True,
+          'questions': [question.format() for question in search_results],
+          'total_questions': len(search_results)
+        })
+    except:
+      abort(422)
 
   '''
   @TODO: 
