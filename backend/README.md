@@ -66,27 +66,225 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
+
+
 
 Endpoints
+```
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions?page=<page_number>'
+POST '/questions'
+POST '/questions/search'
+DELETE '/questions/<question_id>'
+GET '/categories/<category_id>/questions'
+POST '/quizzes'
+```
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
+- Request Body: None
 - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+```
+{
+    '1' : "Science",
+    '2' : "Art",
+    '3' : "Geography",
+    '4' : "History",
+    '5' : "Entertainment",
+    '6' : "Sports"
+}
 
+```
+
+GET '/questions?page=<page_number>'
+- Fetches a paginated list of questions in the system
+- Request Arguments: page_number(Optional)
+- Request Body: None
+- Returns: A list of questions, 
+  number of total questions, current category, categories. 
+```
+{
+    "categories": {
+        "1": "Science",
+        "2": "Art",
+        "3": "Geography",
+        "4": "History",
+        "5": "Entertainment",
+        "6": "Sports"
+    },
+    "current_category": null,
+    "questions": [
+        {
+            "answer": "AnsCurlJson",
+            "category": 3,
+            "difficulty": 3,
+            "id": 25,
+            "question": "QuesCurlJson"
+        },
+        {
+            "answer": "Rashmi",
+            "category": 4,
+            "difficulty": 1,
+            "id": 27,
+            "question": "what is your name"
+        },
+        {
+            "answer": "1945",
+            "category": 4,
+            "difficulty": 1,
+            "id": 28,
+            "question": "when did world war 2 end"
+        }
+    ],
+    "success": true,
+    "total_questions": 23
+}
+```
+POST '/questions'
+- Adds a new question to the list of questions
+- Request Arguments: None
+- Request Body: `{question: string, answer: string, difficulty: int, category: string<category_id>}`
+- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+```
+{
+    "created": 27,
+    "success": true
+}
+```
+POST '/questions/search'
+- fetches all the questions where the substring matches the search term 
+- Request Arguments: None
+- Request Body: `{search_term: string}`
+- Returns : Any questions for whom the search term 
+  is a substring of the question. 
+- For search_term = "tom"
+```
+{
+    "questions": [
+        {
+            "answer": "Apollo 13",
+            "category": 5,
+            "difficulty": 4,
+            "id": 2,
+            "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+        }
+    ],
+    "success": true,
+    "total_questions": 1
+}
+```
+DELETE '/questions/<question_id>'
+- Deletes the question of the question id
+- Request Arguments: question_id
+- Request Body: None
+```
+{
+    "deleted": 27,
+    "success": true
+}
+```
+GET '/categories/<category_id>/questions'
+- Retrives all the question of the given category
+- Request Arguments: category_id
+- Request Body: None
+- Returns: A list of questions of that category, number of total questions, current category, categories.
+```
+{
+    "categories": [
+        {
+            "id": 2,
+            "type": "Art"
+        },
+        {
+            "id": 5,
+            "type": "Entertainment"
+        },
+        {
+            "id": 3,
+            "type": "Geography"
+        },
+        {
+            "id": 4,
+            "type": "History"
+        },
+        {
+            "id": 1,
+            "type": "Science"
+        },
+        {
+            "id": 6,
+            "type": "Sports"
+        }
+    ],
+    "current_category": 4,
+    "questions": [
+        {
+            "answer": "Maya Angelou",
+            "category": 4,
+            "difficulty": 2,
+            "id": 5,
+            "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+        },
+        {
+            "answer": "Muhammad Ali",
+            "category": 4,
+            "difficulty": 1,
+            "id": 9,
+            "question": "What boxer's original name is Cassius Clay?"
+        },
+        {
+            "answer": "George Washington Carver",
+            "category": 4,
+            "difficulty": 2,
+            "id": 12,
+            "question": "Who invented Peanut Butter?"
+        },
+        {
+            "answer": "Scarab",
+            "category": 4,
+            "difficulty": 4,
+            "id": 23,
+            "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+        },
+        {
+            "answer": "1945",
+            "category": 4,
+            "difficulty": 1,
+            "id": 28,
+            "question": "when did world war 2 end"
+        }
+    ],
+    "success": true,
+    "total_questions": 22
+}
+```
+
+POST '/quizzes'
+- Retrives a question that has not already been asked to play the quiz 
+- Request Arguments: None
+- Request Body: 
+```
+ {
+     "previous_questions": [],
+            "quiz_category":{
+                "id": "1",
+                "type": "Science"
+                }
+ }
+```
+- Returns: A question of the given category
+```
+{
+    "question": {
+        "answer": "The Liver",
+        "category": 1,
+        "difficulty": 4,
+        "id": 20,
+        "question": "What is the heaviest organ in the human body?"
+    },
+    "success": true
+}
 ```
 
 
