@@ -180,6 +180,54 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "resource not found")
+
+    def test_422_payload_missing_in_quizzes(self):
+        res = self.client().post('/quizzes')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable entity')
+    
+    def test_400_payload_error_in_quizzes(self):
+        res = self.client().post('/quizzes', json={
+            "previous_question": [],
+            "quiz_categories":{
+                "id": "1",
+                "type": "Science"
+                }
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable entity')
+
+    def test_quizzes(self):
+        res = self.client().post('/quizzes', json={
+            "previous_questions": [],
+            "quiz_category":{
+                "id": "1",
+                "type": "Science"
+                }
+            })
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question'])
+            
+    def test_422_if_proper_category_format_not_provided__in_quizzes(self):
+        res = self.client().post('/quizzes', json={
+            "previous_questions": [],
+            "quiz_category": "4"
+            })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable entity')
+    
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

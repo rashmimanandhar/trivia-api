@@ -212,18 +212,17 @@ def create_app(test_config=None):
     body = request.get_json()
     try:
       if not ('quiz_category' in body and 'previous_questions' in body):
-        abort(422)
+        abort(400)
       
       category = body.get('quiz_category')
       previous_questions = body.get('previous_questions')
-      print(category)
       if (category['id'] == 0):
         available_questions = Question.query.filter(Question.id.notin_((previous_questions))).all()
       else:
         available_questions = Question.query.filter_by(
                   category=category['id']).filter(Question.id.notin_((previous_questions))).all()
       
-      if len(available_questions):
+      if len(available_questions) > 0:
         new_question = available_questions[random.randrange(
                 0, len(available_questions))].format()
       else:
