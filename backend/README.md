@@ -80,7 +80,7 @@ GET '/categories/<category_id>/questions'
 POST '/quizzes'
 ```
 
-# GET '/categories'
+## GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Request Body: None
@@ -97,7 +97,7 @@ POST '/quizzes'
 
 ```
 
-# GET '/questions?page=<page_number>'
+## GET '/questions?page=<page_number>'
 - Fetches a paginated list of questions in the system
 - Request Arguments: page_number(Optional)
 - Request Body: None
@@ -141,7 +141,7 @@ POST '/quizzes'
     "total_questions": 23
 }
 ```
-# POST '/questions'
+## POST '/questions'
 - Adds a new question to the list of questions
 - Request Arguments: None
 - Request Body: `{question: string, answer: string, difficulty: int, category: string<category_id>}`
@@ -152,7 +152,7 @@ POST '/quizzes'
     "success": true
 }
 ```
-# POST '/questions/search'
+## POST '/questions/search'
 - fetches all the questions where the substring matches the search term 
 - Request Arguments: None
 - Request Body: `{search_term: string}`
@@ -174,7 +174,7 @@ POST '/quizzes'
     "total_questions": 1
 }
 ```
-# DELETE '/questions/<question_id>'
+## DELETE '/questions/<question_id>'
 - Deletes the question of the question id
 - Request Arguments: question_id
 - Request Body: None
@@ -184,7 +184,7 @@ POST '/quizzes'
     "success": true
 }
 ```
-# GET '/categories/<category_id>/questions'
+## GET '/categories/<category_id>/questions'
 - Retrives all the question of the given category
 - Request Arguments: category_id
 - Request Body: None
@@ -260,7 +260,7 @@ POST '/quizzes'
 }
 ```
 
-# POST '/quizzes'
+## POST '/quizzes'
 - Retrives a question that has not already been asked to play the quiz 
 - Request Arguments: None
 - Request Body: 
